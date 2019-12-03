@@ -40,7 +40,7 @@ int binary_tree_is_parent_full(const binary_tree_t *node)
  */
 int binary_tree_is_full(const binary_tree_t *tree)
 {
-	if (tree && binary_tree_is_leaf(tree))
+	if (binary_tree_is_leaf(tree))
 		return (1);
 
 	if (binary_tree_is_parent_full(tree))
