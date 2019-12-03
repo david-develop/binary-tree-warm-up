@@ -1,74 +1,54 @@
 #include "binary_trees.h"
 
 /**
- * recursive_height - measures the height of a binary tree
+ * binary_tree_size - measures the size of a binary tree
  *
  * @tree: tree root
- * Return: height
+ * Return: size of the tree or 0 if tree is NULL;
  */
-size_t recursive_height(const binary_tree_t *tree)
-{
-	size_t left = 0;
-	size_t right = 0;
-
-	if (tree == NULL)
-		return (0);
-
-	left = recursive_height(tree->left);
-	right = recursive_height(tree->right);
-
-	if (left > right)
-		return (left + 1);
-
-	return (right + 1);
-}
-
-/**
- * print_level - prints nodes at the same level
- *
- * @tree: tree root
- * @level: level node
- * @func: pointer to a function
- * Return: no return
- */
-int check_level(const binary_tree_t *tree, int level)
+size_t binary_tree_size(const binary_tree_t *tree)
 {
 	if (tree == NULL)
 		return (0);
 
-	if (level == 1)
-	{
-		if (!(tree->left) && tree->right)
-			return (0);
-	}
-	else if (level > 1)
-	{
-		check_level(tree->left, level - 1);
-		check_level(tree->right, level - 1);
-	}
-	return (1);
+	return (binary_tree_size(tree->left) + binary_tree_size(tree->right) + 1);
 }
 
 /**
- * binary_tree_levelorder - prints data in level-order traversal
+ * tree_is_complete - checks if tree is complete
+ *
+ * @tree: pointer to the tree root
+ * @i: node index
+ * @cnodes: number of nodes
+ * Return: 1 if tree is complete, 0 otherwise
+ */
+int tree_is_complete(const binary_tree_t *tree, int i, int cnodes)
+{
+	if (tree == NULL)
+		return (1);
+
+	if (i >= cnodes)
+		return (0);
+
+	return (tree_is_complete(tree->left, (2 * i) + 1, cnodes) &&
+		tree_is_complete(tree->right, (2 * i) + 2, cnodes));
+}
+
+
+/**
+ * binary_tree_is_complete - calls to tree_is_complete function
  *
  * @tree: tree root
- * @func: pointer to a function
- * Return: no return
+ * Return: 1 if tree is complete, 0 otherwise
  */
 int binary_tree_is_complete(const binary_tree_t *tree)
 {
-	size_t height;
-	size_t i;
-	int ret;
+	size_t cnodes;
 
 	if (tree == NULL)
 		return (0);
 
-	height = recursive_height(tree);
+	cnodes = binary_tree_size(tree);
 
-	for (i = 1; i <= height; i++)
-		ret = check_level(tree, i);
-
-	return (ret);
+	return (tree_is_complete(tree, 0, cnodes));
 }
