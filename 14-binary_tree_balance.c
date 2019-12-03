@@ -6,10 +6,10 @@
  * @tree: tree root
  * Return: balance factor
  */
-size_t recursive_balance(const binary_tree_t *tree)
+int recursive_balance(const binary_tree_t *tree)
 {
-	size_t left = 0;
-	size_t right = 0;
+	int left = 0;
+	int right = 0;
 
 	if (tree == NULL)
 		return (-1);
@@ -27,7 +27,7 @@ size_t recursive_balance(const binary_tree_t *tree)
  * @tree: tree root
  * Return: balance factor of the tree or 0 if tree is NULL;
  */
-size_t binary_tree_balance(const binary_tree_t *tree)
+int binary_tree_balance(const binary_tree_t *tree)
 {
 	if (tree == NULL)
 		return (0);
