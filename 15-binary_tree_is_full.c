@@ -1,12 +1,12 @@
 #include "binary_trees.h"
 
 /**
- * binary_tree_is_leaf - checks if a node is a leaf
+ * is_leaf - checks if a node is a leaf
  *
  * @node: pointer to the node to check
  * Return: 1 if node is a leaf, otherwise 0
  */
-int binary_tree_is_leaf(const binary_tree_t *node)
+int is_leaf(const binary_tree_t *node)
 {
 	int leaf = 0;
 
@@ -40,7 +40,7 @@ int binary_tree_is_parent_full(const binary_tree_t *node)
  */
 int binary_tree_is_full(const binary_tree_t *tree)
 {
-	if (binary_tree_is_leaf(tree->left) && binary_tree_is_leaf(tree->right))
+	if (tree && is_leaf(tree->left) && is_leaf(tree->right))
 		return (1);
 
 	if (binary_tree_is_parent_full(tree))
