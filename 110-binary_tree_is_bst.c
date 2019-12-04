@@ -35,10 +35,10 @@ int check_parent(const binary_tree_t *tree)
 
 	while (prnt && grand_prnt)
 	{
-		if (prnt->n < grand_prnt->n && tree->n > grand_prnt->n)
+		if (prnt->n < grand_prnt->n && tree->n >= grand_prnt->n)
 			return (0);
 
-		if (prnt->n > grand_prnt->n && tree->n < grand_prnt->n)
+		if (prnt->n > grand_prnt->n && tree->n <= grand_prnt->n)
 			return (0);
 
 		prnt = prnt->parent;
@@ -62,10 +62,10 @@ int check_is_bst(const binary_tree_t *tree)
 	if (binary_tree_is_leaf(tree))
 		return (1);
 
-	if (tree->left && tree->left->n > tree->n)
+	if (tree->left && tree->left->n >= tree->n)
 		return (0);
 
-	if (tree->right && tree->right->n < tree->n)
+	if (tree->right && tree->right->n <= tree->n)
 		return (0);
 
 	if (!check_parent(tree->left) || !check_parent(tree->right))
