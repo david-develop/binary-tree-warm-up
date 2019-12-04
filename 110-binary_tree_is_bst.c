@@ -31,13 +31,19 @@ int check_parent(const binary_tree_t *tree)
 		return (1);
 
 	prnt = tree->parent;
-	grand_prnt = tree->parent->parent;
+	grand_prnt = prnt->parent;
 
-	if (prnt->n < grand_prnt->n && tree->n > grand_prnt->n)
-		return (0);
+	while (prnt && grand_prnt)
+	{
+		if (prnt->n < grand_prnt->n && tree->n > grand_prnt->n)
+			return (0);
 
-	if (prnt->n > grand_prnt->n && tree->n < grand_prnt->n)
-		return (0);
+		if (prnt->n > grand_prnt->n && tree->n < grand_prnt->n)
+			return (0);
+
+		prnt = prnt->parent;
+		grand_prnt = prnt->parent;
+	}
 
 	return (1);
 }
