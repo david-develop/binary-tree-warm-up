@@ -32,7 +32,7 @@ void check_balance(avl_t **node, int value)
 		return;
 	}
 
-	if (balance < -1 && value < (*node)->left->n)
+	if (balance < -1 && value < (*node)->right->n)
 	{
 		(*node)->right = binary_tree_rotate_right((*node)->right);
 		*node = binary_tree_rotate_left(*node);
@@ -61,7 +61,8 @@ avl_t *avl_in(avl_t **tree, int value)
 		else
 		{
 			node = avl_in(&((*tree)->left), value);
-			check_balance(tree, value);
+			if (node)
+				check_balance(tree, value);
 			return (node);
 		}
 	}
@@ -76,7 +77,8 @@ avl_t *avl_in(avl_t **tree, int value)
 		else
 		{
 			node = avl_in(&((*tree)->right), value);
-			check_balance(tree, value);
+			if (node)
+				check_balance(tree, value);
 			return (node);
 		}
 	}
