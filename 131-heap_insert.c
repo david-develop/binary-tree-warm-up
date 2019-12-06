@@ -2,59 +2,59 @@
 #include <stdio.h>
 
 /**
- * binary_tree_size - measures the size of a binary tree
+ * height - measures the height of a tree
  *
  * @tree: tree root
- * Return: size of the tree or 0 if tree is NULL;
+ * Return: height
  */
-size_t binary_tree_size(const binary_tree_t *tree)
+int height(const binary_tree_t *tree)
 {
-	if (tree == NULL)
-		return (0);
+	int left = 0;
+	int right = 0;
 
-	return (binary_tree_size(tree->left) + binary_tree_size(tree->right) + 1);
+	if (tree == NULL)
+		return (-1);
+
+	left = height(tree->left);
+	right = height(tree->right);
+
+	if (left > right)
+		return (left + 1);
+
+	return (right + 1);
 }
 
 /**
- * tree_is_complete - checks if tree is complete
- *
- * @tree: pointer to the tree root
- * @i: node index
- * @cnodes: number of nodes
- * Return: 1 if tree is complete, 0 otherwise
- */
-int tree_is_complete(const binary_tree_t *tree, int i, int cnodes)
-{
-	if (tree == NULL)
-		return (1);
-
-	if (i >= cnodes)
-		return (0);
-
-	return (tree_is_complete(tree->left, (2 * i) + 1, cnodes) &&
-		tree_is_complete(tree->right, (2 * i) + 2, cnodes));
-}
-
-
-/**
- * binary_tree_is_complete - calls to tree_is_complete function
+ * binary_tree_is_perfect - checks if a binary tree is perfect
  *
  * @tree: tree root
- * Return: 1 if tree is complete, 0 otherwise
+ * Return: 1 if tree is perfect, 0 otherwise
  */
-int binary_tree_is_complete(const binary_tree_t *tree)
+int binary_tree_is_perfect(const binary_tree_t *tree)
 {
-	size_t cnodes;
+	if (tree && height(tree->left) == height(tree->right))
+	{
+		if (height(tree->left) == -1)
+			return (1);
 
-	if (tree == NULL)
-		return (0);
+		if ((tree->left && !((tree->left)->left) && !((tree->left)->right))
+		    && (tree->right && !((tree->right)->left) && !((tree->right)->right)))
+			return (1);
 
-	cnodes = binary_tree_size(tree);
+		if (tree && tree->left && tree->right)
+			return (binary_tree_is_perfect(tree->left) &&
+				binary_tree_is_perfect(tree->right));
+	}
 
-	return (tree_is_complete(tree, 0, cnodes));
+	return (0);
 }
 
-
+/**
+ * heap_insert - function that inserts a value in Max Binary Heap
+ * @value: value to be inserted
+ * @root: tree root
+ * Return: pointer to the created node, or NULL on failure.
+ */
 heap_t *heap_insert(heap_t **root, int value)
 {
 	if (*root == NULL)
@@ -63,16 +63,15 @@ heap_t *heap_insert(heap_t **root, int value)
 		return (*root);
 	}
 
-	if (binary_tree_is_complete(*root))
+	if (binary_tree_is_perfect(*root))
 	{
-		printf("Llega\n");
 		if ((*root)->left)
 			return (heap_insert(&((*root)->left), value));
 		else
 			return ((*root)->left = binary_tree_node(*root, value));
 	}
 
-	if (!binary_tree_is_complete((*root)->left))
+	if (!binary_tree_is_perfect((*root)->left))
 	{
 		if ((*root)->left)
 			return (heap_insert(&((*root)->left), value));
