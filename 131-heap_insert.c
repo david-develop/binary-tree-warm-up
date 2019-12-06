@@ -49,6 +49,57 @@ int binary_tree_is_perfect(const binary_tree_t *tree)
 	return (0);
 }
 
+void swap(heap_t **arg_node)
+{
+	heap_t *node_parent, *node, *node_right, *node_left;
+
+	node = *arg_node;
+	node_parent = node->parent;
+
+	if (node_parent && node->n > node_parent->n)
+	{
+		node_right = node->right;
+		node_left = node->left;
+
+		if (node_parent->parent)
+		{
+			if (node_parent->parent->left == node_parent)
+				node_parent->parent->left = node;
+			else
+				node_parent->parent->right = node;
+		}
+
+		node->parent = node_parent->parent;
+
+		if (node_parent->left == node)
+		{
+			if (node_parent->right)
+				node_parent->right->parent = node;
+			node->right = node_parent->right;
+			node->left = node_parent;
+		}
+		else
+		{
+			if (node_parent->left)
+				node_parent->left->parent = node;
+			node->left = node->left;
+			node->right = node_parent;
+		}
+
+		node_parent->left = node_left;
+		if (node_left)
+			node_left->parent = node_parent;
+
+		node_parent->right = node_right;
+		if (node_right)
+			node_right->parent = node_parent;
+
+		node_parent->parent = node;
+	}
+
+	*arg_node = node;
+}
+
 /**
  * heap_insert - function that inserts a value in Max Binary Heap
  * @value: value to be inserted
@@ -66,17 +117,27 @@ heap_t *heap_insert(heap_t **root, int value)
 	if (binary_tree_is_perfect(*root))
 	{
 		if ((*root)->left)
+		{
 			return (heap_insert(&((*root)->left), value));
+		}
 		else
+		{
+			(*root)->left = binary_tree_node(*root, value);
+			swap();
 			return ((*root)->left = binary_tree_node(*root, value));
+		}
 	}
 
 	if (!binary_tree_is_perfect((*root)->left))
 	{
 		if ((*root)->left)
+		{
 			return (heap_insert(&((*root)->left), value));
+		}
 		else
+		{
 			return ((*root)->left = binary_tree_node(*root, value));
+		}
 	}
 
 	if ((*root)->right)
