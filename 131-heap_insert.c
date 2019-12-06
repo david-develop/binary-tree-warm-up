@@ -1,6 +1,66 @@
 #include "binary_trees.h"
-#include <stdio.h>
 
+/**
+ * swap_right - function that swap if parent is bigger, right case
+ * @node: node to be checked and swaped
+ * @parent: node->parent
+ */
+void swap_right(heap_t *node, heap_t *parent)
+{
+	heap_t *aux, *aux2;
+
+	aux = parent->left;
+	aux2 = parent->parent;
+
+	parent->right = node->right;
+	if (node->right)
+		node->right->parent = parent;
+	parent->left = node->left;
+	if (node->left)
+		node->left->parent = parent;
+
+	node->right = parent;
+	node->left = aux;
+	if (aux)
+		aux->parent = node;
+	parent->parent = node;
+	node->parent = aux2;
+	if (aux2 && parent == aux2->left)
+		aux2->left = node;
+	else if (aux2 && parent == aux2->right)
+		aux2->right = node;
+}
+
+/**
+ * swap_left - function that swap if parent is bigger, left case
+ * @node: node to be checked and swaped
+ * @parent: node->parent
+ */
+void swap_left(heap_t *node, heap_t *parent)
+{
+	heap_t *aux, *aux2;
+
+	aux = parent->right;
+	aux2 = parent->parent;
+
+	parent->right = node->right;
+	if (node->right)
+		node->right->parent = parent;
+	parent->left = node->left;
+	if (node->left)
+		node->left->parent = parent;
+
+	node->left = parent;
+	node->right = aux;
+	if (aux)
+		aux->parent = node;
+	parent->parent = node;
+	node->parent = aux2;
+	if (aux2 && parent == aux2->left)
+		aux2->left = node;
+	else if (aux2 && parent == aux2->right)
+		aux2->right = node;
+}
 /**
  * height - measures the height of a tree
  *
@@ -49,60 +109,27 @@ int binary_tree_is_perfect(const binary_tree_t *tree)
 	return (0);
 }
 
+/**
+ * swap - function that swap if parent is bigger
+ * @arg_node: node to be checked and swaped
+ */
 void swap(heap_t **arg_node)
 {
-	heap_t *parent, *aux, *aux2, *node;
+	heap_t *parent, *node;
 
 	node = *arg_node;
 	parent = node->parent;
 
-	if (parent && node->n > parent->n)
+	while (node->parent && node->n > node->parent->n)
 	{
+		parent = node->parent;
 		if (node == parent->right)
 		{
-			aux = parent->left;
-			aux2 = parent->parent;
-
-			parent->right = node->right;
-			if (node->right)
-				node->right->parent = parent;
-			parent->left = node->left;
-			if (node->left)
-				node->left->parent = parent;
-
-			node->right = parent;
-			node->left = aux;
-			if (aux)
-				aux->parent = node;
-			parent->parent = node;
-			node->parent = aux2;
-			if (aux2 && parent == aux2->left)
-				aux2->left = node;
-			else if (aux2 && parent == aux2->right)
-				aux2->right = node;
+			swap_right(node, parent);
 		}
 		else if (node == parent->left)
 		{
-			aux = parent->right;
-			aux2 = parent->parent;
-
-			parent->right = node->right;
-			if (node->right)
-				node->right->parent = parent;
-			parent->left = node->left;
-			if (node->left)
-				node->left->parent = parent;
-
-			node->left = parent;
-			node->right = aux;
-			if (aux)
-				aux->parent = node;
-			parent->parent = node;
-			node->parent = aux2;
-			if (aux2 && parent == aux2->left)
-				aux2->left = node;
-			else if (aux2 && parent == aux2->right)
-				aux2->right = node;
+			swap_left(node, parent);
 		}
 	}
 }
@@ -116,7 +143,6 @@ void swap(heap_t **arg_node)
 heap_t *heap_insert(heap_t **root, int value)
 {
 	heap_t *new_node;
-	int flag = 0;
 
 	if (*root == NULL)
 	{
@@ -127,29 +153,26 @@ heap_t *heap_insert(heap_t **root, int value)
 	if (binary_tree_is_perfect(*root) || !binary_tree_is_perfect((*root)->left))
 	{
 		if ((*root)->left)
-		{
-			return (heap_insert(&((*root)->left), value));
-		}
+			new_node = heap_insert(&((*root)->left), value);
 		else
 		{
-			if ((*root)->parent == NULL)
-				flag = 1;
 			new_node = (*root)->left = binary_tree_node(*root, value);
 			swap(&((*root)->left));
-			if (flag == 1)
-				*root = new_node;
-			return (new_node);
+		}
+	}
+	else
+	{
+		if ((*root)->right)
+			new_node = heap_insert(&((*root)->right), value);
+		else
+		{
+			new_node = (*root)->right = binary_tree_node(*root, value);
+			swap(&((*root)->right));
 		}
 	}
 
-	if ((*root)->right)
-		return (heap_insert(&((*root)->right), value));
-	else
-	{
-		new_node = (*root)->right = binary_tree_node(*root, value);
-		swap(&((*root)->right));
-		return (new_node);
-	}
-
-	return (NULL);
+	if (new_node->parent == NULL && (*root)->parent != NULL &&
+	    !((*root)->parent->parent))
+		*root = new_node;
+	return (new_node);
 }
